@@ -1,3 +1,4 @@
+//importing necessary modules
 const express = require("express");
 const axios = require("axios");
 const { createObjectCsvWriter } = require("csv-writer");
@@ -8,8 +9,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get("/generate-csv", async (req, res) => {
+    //try-catch block for error handling
   try {
-    // Step 3: Integrate with the APIs and Extract Data
+    
     const [usersResponse, postsResponse, commentsResponse] = await Promise.all([
       axios.get("https://jsonplaceholder.typicode.com/users"),
       axios.get("https://jsonplaceholder.typicode.com/posts"),
@@ -20,7 +22,7 @@ app.get("/generate-csv", async (req, res) => {
     const posts = postsResponse.data;
     const comments = commentsResponse.data;
 
-    // Step 4: Extract Data and Combine into CSV Format
+    //Extract Data and Combine into CSV Format
     const csvData = users.map((user) => {
       const post = posts.find((post) => post.userId === user.id) || {};
       const comment =
@@ -33,7 +35,7 @@ app.get("/generate-csv", async (req, res) => {
       };
     });
 
-    // Step 5: Generate CSV File
+    //Generate CSV File
     const csvWriter = createObjectCsvWriter({
       path: path.join(__dirname, "output.csv"),
       header: [
@@ -45,10 +47,10 @@ app.get("/generate-csv", async (req, res) => {
 
     await csvWriter.writeRecords(csvData);
 
-    // Respond with the path to the generated CSV file
+    //path to the generated CSV file
     res.json({ path: path.join(__dirname, "output.csv") });
   } catch (error) {
-    // Step 6: Error Handling
+    //Error Handling
     console.error("Error generating CSV:", error);
     res
       .status(500)
